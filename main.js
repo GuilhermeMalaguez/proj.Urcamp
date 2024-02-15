@@ -1,8 +1,4 @@
-
-
-let times = [];
-
-function cadastrarTime() {
+async function cadastrarTime() {
   const nomeTime = document.getElementById('nomeTime').value;
 
   if (nomeTime.trim() === '') {
@@ -10,55 +6,40 @@ function cadastrarTime() {
     return;
   }
 
-  const novoTime = {
-    id: times.length + 1,
-    nome: nomeTime
-  };
+  try {
+    const response = await fetch('config.times.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `nomeTime=${nomeTime}`,
+    });
 
-  times.push(novoTime);
+    if (response.ok) {
+      try {
+        const resultado = await response.json();
 
-  atualizarTabelaTimes();
+        if (resultado && resultado.mensagem) {
+          alert(resultado.mensagem);
 
-  document.getElementById('nomeTime').value = '';
-}
-
-function editarTime(id) {
-  const nomeNovo = prompt('Digite o novo nome do time:');
-  if (nomeNovo !== null) {
-    const timeEditado = times.find(time => time.id === id);
-    timeEditado.nome = nomeNovo;
-    atualizarTabelaTimes();
+          // Se o cadastro foi bem-sucedido, recarregue a lista de times
+          obterListaTimes();
+          document.getElementById('nomeTime').value = '';
+        } else {
+          console.error('Resposta do servidor não contém JSON válido:', resultado);
+          alert('Erro inesperado na resposta do servidor. Verifique o console para mais detalhes.');
+        }
+      } catch (jsonError) {
+        console.error('Erro ao processar JSON:', jsonError);
+        alert('Erro inesperado ao processar a resposta do servidor. Verifique o console para mais detalhes.');
+      }
+    } else {
+      const errorText = await response.text();
+      alert(`Erro ao cadastrar o time. Detalhes: ${errorText}`);
+    }
+  } catch (error) {
+    console.error('Erro durante a requisição AJAX:', error);
+    alert('Erro inesperado durante a requisição AJAX. Verifique o console para mais detalhes.');
   }
 }
 
-function excluirTime(id) {
-  if (confirm('Deseja realmente excluir o time?')) {
-    times = times.filter(time => time.id !== id);
-    atualizarTabelaTimes();
-  }
-}
-
-function atualizarTabelaTimes() {
-  const corpoTabelaTimes = document.getElementById('corpoTabelaTimes');
-  corpoTabelaTimes.innerHTML = '';
-
-  times.forEach(time => {
-    const linha = document.createElement('tr');
-    linha.innerHTML = `
-  <td>${time.id}</td>
-  <td>${time.nome}</td>
-  <td>
-    <button onclick="editarTime(${time.id})">Editar</button>
-    <button onclick="excluirTime(${time.id})" class="excluir">Excluir</button>
-  </td>
-;
-
-    `;
-    corpoTabelaTimes.appendChild(linha);
-  });
-}
-
-atualizarTabelaTimes();
-
-
-console.log("funcionou");

@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+include ("config.times.php");
+<form> action="?page-salvar" method="POST"
+
 if(empty($_SESSION)){
     print "<script>location.href='index.php';</script>";
 }
@@ -21,7 +24,7 @@ if(empty($_SESSION)){
   <form id="timeForm" class="center-form">
     <label for="nomeTime"> NOME DO TIME:</label>
     <input type="text" id="nomeTime" required>
-    <button type="button" onclick="cadastrarTime()" class="salvar">Salvar</button>
+    <button type="submit" onclick="cadastrarTime()" class="salvar">Salvar</button>
   </form>
   
   <h3 class="center-form">Lista de Times</h3>
@@ -39,3 +42,4 @@ if(empty($_SESSION)){
   <script src="main.js"></script>
 </body>
 </html>
+</form>
