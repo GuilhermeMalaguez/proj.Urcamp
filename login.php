@@ -4,9 +4,7 @@ session_start();
 
 if (empty($_POST) || empty($_POST["usuario"]) || empty($_POST["senha"])) {
     echo "Campos de usuário e senha são obrigatórios.";
-    // Se desejar, pode adicionar um redirecionamento aqui
-    // header("Location: index.php");
-    // exit;
+   
 }
 
 include('config.php');
@@ -29,7 +27,7 @@ if ($result->num_rows > 0) {
     if (password_verify($senha, $senha_hash)) {
         $_SESSION["usuario"] = $usuario;
         $_SESSION["nome"] = $row["nome"];
-        header("Location: dashboard.php");
+        header("Location: novotime.php");
         exit;
     } else {
         echo "Senha incorreta.";
